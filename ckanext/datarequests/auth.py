@@ -18,7 +18,8 @@
 # along with CKAN Data Requests Extension. If not, see <http://www.gnu.org/licenses/>.
 
 from ckan import authz
-from ckan.plugins.toolkit import asbool, config, get_action, chained_auth_function, NotFound, NotAuthorized
+from ckan.logic import NotFound
+from ckan.plugins.toolkit import asbool, config, get_action, chained_auth_function, NotAuthorized
 
 from . import constants
 

@@ -19,7 +19,7 @@
 
 from ckan import authz
 from ckan.logic import NotFound
-from ckan.plugins.toolkit import asbool, config, get_action, chained_auth_function, NotAuthorized
+from ckan.plugins.toolkit import asbool, config, get_action, auth_disallow_anonymous_access, chained_auth_function, NotAuthorized
 
 from . import constants
 

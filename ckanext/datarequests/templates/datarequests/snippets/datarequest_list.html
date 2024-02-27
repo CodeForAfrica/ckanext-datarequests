@@ -6,7 +6,9 @@
   {% if datarequests %}
     <ul class="dataset-list unstyled list-unstyled">
       {% for datarequest in datarequests %}
+        {% if datarequest.user_id == c.userobj.id %}
         {{ h.snippet('datarequests/snippets/datarequest_item.html', datarequest=datarequest, facet_titles=facet_titles) }}
+        {% endif %}
       {% endfor %}
     </ul>
   {% else %}

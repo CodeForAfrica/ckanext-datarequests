@@ -19,7 +19,7 @@
 
 from ckan import authz
 from ckan.logic import NotFound
-from ckan.plugins.toolkit import asbool, config, get_action, auth_disallow_anonymous_access, chained_auth_function, NotAuthorized
+from ckan.plugins.toolkit import asbool, config, get_action, NotAuthorized
 
 from . import constants
 
@@ -39,17 +39,30 @@ def _is_any_group_member(context):
             user_name = user_obj.name
     return user_name and authz.has_user_permission_for_some_org(user_name, 'read')
 
-@chained_auth_function
-@auth_disallow_anonymous_access
-def auth_allow_superadmin_only(next_auth_function, context, data_dict=None):
-    user_name = context.get('user')
-    try:
-        user = get_action('user_show')(context, {'id': user_name})
-        if user.get('sysadmin', False):
-            return next_auth_function(context, data_dict)
-    except NotFound:
-        pass
-    raise NotAuthorized('You must be a superadmin to perform this action.')
+# @chained_auth_function
+# @auth_disallow_anonymous_access
+# def auth_allow_superadmin_only(next_auth_function, context, data_dict=None):
+#     user_name = context.get('user')
+#     try:
+#         user = get_action('user_show')(context, {'id': user_name})
+#         if not user.get('sysadmin', False):
+#             raise NotAuthorized('You must be a superadmin to perform this action.')
+#     except NotFound:
+#         pass
+#     return next_auth_function(context, data_dict)
+
+def auth_allow_superadmin_only(func):
+    def wrapper(context, data_dict=None):
+        user_name = context.get('user')
+        try:
+            user = get_action('user_show')(context, {'id': user_name})
+            if not user.get('sysadmin', False):
+                raise NotAuthorized('You must be a superadmin to perform this action.')
+        except NotFound:
+            raise NotAuthorized('User not found.')
+        return func(context, data_dict)
+    return wrapper
+
 
 @auth_allow_superadmin_only
 def show_datarequest(context, data_dict):

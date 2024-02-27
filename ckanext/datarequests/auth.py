@@ -40,6 +40,7 @@ def _is_any_group_member(context):
     return user_name and authz.has_user_permission_for_some_org(user_name, 'read')
 
 @chained_auth_function
+@auth_disallow_anonymous_access
 def auth_allow_superadmin_only(next_auth_function, context, data_dict=None):
     user_name = context.get('user')
     try:

@@ -18,7 +18,7 @@
 # along with CKAN Data Requests Extension. If not, see <http://www.gnu.org/licenses/>.
 
 from ckan import authz
-from ckan.plugins.toolkit import asbool, auth_allow_anonymous_access, config, get_action
+from ckan.plugins.toolkit import asbool, config, get_action, chained_auth_function, NotFound, NotAuthorized
 
 from . import constants
 
@@ -38,8 +38,18 @@ def _is_any_group_member(context):
             user_name = user_obj.name
     return user_name and authz.has_user_permission_for_some_org(user_name, 'read')
 
+@chained_auth_function
+def auth_allow_superadmin_only(next_auth_function, context, data_dict=None):
+    user_name = context.get('user')
+    try:
+        user = get_action('user_show')(context, {'id': user_name})
+        if user.get('sysadmin', False):
+            return next_auth_function(context, data_dict)
+    except NotFound:
+        pass
+    raise NotAuthorized('You must be a superadmin to perform this action.')
 
-@auth_allow_anonymous_access
+@auth_allow_superadmin_only
 def show_datarequest(context, data_dict):
     return {'success': True}
 
@@ -57,7 +67,7 @@ def update_datarequest(context, data_dict):
     return auth_if_creator(context, data_dict, constants.SHOW_DATAREQUEST)
 
 
-@auth_allow_anonymous_access
+@auth_allow_superadmin_only
 def list_datarequests(context, data_dict):
     return {'success': True}
 
@@ -74,13 +84,13 @@ def comment_datarequest(context, data_dict):
     return {'success': True}
 
 
-@auth_allow_anonymous_access
+@auth_allow_superadmin_only
 def list_datarequest_comments(context, data_dict):
     new_data_dict = {'id': data_dict['datarequest_id']}
     return show_datarequest(context, new_data_dict)
 
 
-@auth_allow_anonymous_access
+@auth_allow_superadmin_only
 def show_datarequest_comment(context, data_dict):
     return {'success': True}
 

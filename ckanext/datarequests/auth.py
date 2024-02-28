@@ -47,10 +47,8 @@ def auth_allow_superadmin_only(action):
     exception if a superadmin user is not provided in the context.
     '''
     def decorated(context, data_dict=None):
-        user_name = context.get('user')
         try:
-            user = get_action('user_show')(context, {'id': user_name})
-            if not user.get('sysadmin', False):
+            if not authz.is_sysadmin(context.get('user')):
                 raise NotAuthorized('You must be a superadmin to perform this action.')
         except NotFound:
             raise NotAuthorized('User not found.')

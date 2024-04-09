@@ -56,7 +56,7 @@ def update_datarequest(context, data_dict):
     return auth_if_creator(context, data_dict, constants.SHOW_DATAREQUEST)
 
 
-@auth_disallow_anonymous_access
+# @auth_disallow_anonymous_access
 def list_datarequests(context, data_dict):
     return {'success': True}
 
@@ -73,13 +73,13 @@ def comment_datarequest(context, data_dict):
     return {'success': True}
 
 
-@auth_disallow_anonymous_access
+# @auth_disallow_anonymous_access
 def list_datarequest_comments(context, data_dict):
     new_data_dict = {'id': data_dict['datarequest_id']}
     return show_datarequest(context, new_data_dict)
 
 
-@auth_disallow_anonymous_access
+# @auth_disallow_anonymous_access
 def show_datarequest_comment(context, data_dict):
     return {'success': True}
 

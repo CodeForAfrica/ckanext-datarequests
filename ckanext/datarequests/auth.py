@@ -38,7 +38,7 @@ def _is_any_group_member(context):
             user_name = user_obj.name
     return user_name and authz.has_user_permission_for_some_org(user_name, 'read')
 
-@auth_disallow_anonymous_access
+# @auth_disallow_anonymous_access
 def show_datarequest(context, data_dict):
     return {'success': True}
 

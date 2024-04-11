@@ -18,7 +18,7 @@
 # along with CKAN Data Requests Extension. If not, see <http://www.gnu.org/licenses/>.
 
 from ckan import authz
-from ckan.plugins.toolkit import asbool, config, get_action, auth_disallow_anonymous_access
+from ckan.plugins.toolkit import asbool, config, get_action, auth_disallow_anonymous_access, auth_allow_anonymous_access
 
 from . import constants
 
@@ -38,7 +38,7 @@ def _is_any_group_member(context):
             user_name = user_obj.name
     return user_name and authz.has_user_permission_for_some_org(user_name, 'read')
 
-# @auth_disallow_anonymous_access
+@auth_allow_anonymous_access
 def show_datarequest(context, data_dict):
     return {'success': True}
 
@@ -55,8 +55,7 @@ def auth_if_creator(context, data_dict, show_function):
 def update_datarequest(context, data_dict):
     return auth_if_creator(context, data_dict, constants.SHOW_DATAREQUEST)
 
-
-# @auth_disallow_anonymous_access
+@auth_allow_anonymous_access
 def list_datarequests(context, data_dict):
     return {'success': True}
 
@@ -72,14 +71,12 @@ def close_datarequest(context, data_dict):
 def comment_datarequest(context, data_dict):
     return {'success': True}
 
-
-# @auth_disallow_anonymous_access
+@auth_allow_anonymous_access
 def list_datarequest_comments(context, data_dict):
     new_data_dict = {'id': data_dict['datarequest_id']}
     return show_datarequest(context, new_data_dict)
 
-
-# @auth_disallow_anonymous_access
+@auth_allow_anonymous_access
 def show_datarequest_comment(context, data_dict):
     return {'success': True}
 
